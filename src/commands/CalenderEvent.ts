@@ -78,7 +78,26 @@ export const broadcastEvents: SlashCommand = {
   data: new SlashCommandBuilder()
     .setName('cal-alert')
     .setDescription('alert channel upcoming events'),
-  execute: async (interaction: CommandInteraction) => {},
+  execute: async (interaction: CommandInteraction) => {
+    const calendar = new GCalendarProvider();
+    const events = await calendar.listEvents();
+    const reply = new EmbedBuilder()
+      .setTitle('체널에 일정을 공지드립니다!')
+      .setURL(process.env.CALENDAR_PUB_URL!)
+      .setAuthor({
+        name: 'Some name',
+        iconURL: 'https://i.imgur.com/AfFp7pu.png',
+        url: 'https://discord.js.org',
+      })
+      .setDescription('30일 내 예정된 일정 목록입니다.');
+    events.forEach(event => {
+      reply.addFields({
+        name: `[${event.date}] ${event.title}`,
+        value: `${event.description}`,
+      });
+    });
+    await interaction.reply({ embeds: [reply], ephemeral: false });
+  },
 };
 export const openWebView: SlashCommand = {
   data: new SlashCommandBuilder()
