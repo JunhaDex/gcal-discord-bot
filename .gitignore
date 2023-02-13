@@ -15,6 +15,8 @@ build
 dist
 secret
 *.local
+.parcel-cache
+.cache
 
 #infrastructure
 .k8s.*

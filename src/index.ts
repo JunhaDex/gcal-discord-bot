@@ -2,7 +2,6 @@ import { Client, Events, GatewayIntentBits, REST, Routes } from 'discord.js';
 import * as dotenv from 'dotenv';
 import Commands from './commands';
 import Interactions from './interactions';
-import commands from './commands';
 
 dotenv.config();
 
@@ -27,12 +26,7 @@ const main = async () => {
     });
     console.log('logged in!');
   });
-
-  client.on(Events.MessageCreate, message => {
-    console.log('reading', message.content);
-  });
   client.on(Events.InteractionCreate, async (interaction: any) => {
-    console.log(interaction);
     const admin = await client.users.fetch(process.env.CHANNEL_ADMIN_ID!);
     if (interaction.isChatInputCommand()) {
       const exec = Commands.find(

@@ -1,7 +1,6 @@
 import { google } from 'googleapis';
 import * as path from 'path';
-import * as dayjs from 'dayjs';
-import 'dayjs/locale/ko';
+import dayjs from 'dayjs';
 
 const SCOPES = ['https://www.googleapis.com/auth/calendar'];
 const PATH = path.join(
@@ -23,10 +22,10 @@ export default class GCalendarProvider {
 
   async listCalender() {
     const res = await this.gCal.calendarList.list();
-    console.log(res.data);
   }
 
   async listEvents() {
+    await import('dayjs/locale/ko.js');
     const [timeMin, timeMax] = [
       dayjs().format(),
       dayjs().add(30, 'day').format(),
@@ -70,6 +69,5 @@ export default class GCalendarProvider {
         id: process.env.CALENDAR_ID,
       },
     });
-    console.log(res.data);
   }
 }

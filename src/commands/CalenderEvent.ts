@@ -6,7 +6,7 @@ import {
   EmbedBuilder,
   SlashCommandBuilder,
 } from 'discord.js';
-import * as dayjs from 'dayjs';
+import dayjs from 'dayjs';
 import GCalendarProvider from '../providers/gcalendar.provider';
 
 export const Ping: SlashCommand = {
@@ -16,7 +16,6 @@ export const Ping: SlashCommand = {
     .setDescription('server ping')
     .setDescriptionLocalizations({ ko: '서버 연결을 확인합니다' }),
   execute: async (interaction: CommandInteraction) => {
-    console.log('executed!');
     const exampleEmbed = new EmbedBuilder()
       .setTitle('Some title')
       .setURL('https://discord.js.org/')
