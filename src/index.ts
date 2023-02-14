@@ -65,4 +65,5 @@ const main = async () => {
 
   await client.login(process.env.ACCESS_TOKEN);
 };
+//TODO manage keyfile
 main();
