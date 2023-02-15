@@ -3,10 +3,7 @@ import * as path from 'path';
 import dayjs from 'dayjs';
 
 const SCOPES = ['https://www.googleapis.com/auth/calendar'];
-const PATH = path.join(
-  process.cwd(),
-  'secret/gcloud-svc-dev-secret-fb52124767a5.json'
-);
+const PATH = path.join(process.cwd(), 'secret/auth-key.json');
 
 export default class GCalendarProvider {
   private readonly accessToken;
@@ -14,11 +11,7 @@ export default class GCalendarProvider {
 
   constructor() {
     this.accessToken = new google.auth.GoogleAuth({
-      projectId: '',
-      credentials: {
-        client_email: '',
-        private_key: '',
-      },
+      keyFile: PATH,
       scopes: SCOPES,
     });
     this.gCal = google.calendar({ version: 'v3', auth: this.accessToken });
@@ -35,7 +28,7 @@ export default class GCalendarProvider {
       dayjs().add(30, 'day').format(),
     ];
     const res = await this.gCal.events.list({
-      calendarId: process.env.GOS_CALENDAR_ID!,
+      calendarId: process.env.GOC_CALENDAR_ID!,
       timeMin,
       timeMax,
     });
@@ -58,7 +51,7 @@ export default class GCalendarProvider {
     const latest = [...(await this.listEvents())][0];
     if (latest) {
       const res = await this.gCal.events.patch({
-        calendarId: process.env.GOS_CALENDAR_ID!,
+        calendarId: process.env.GOC_CALENDAR_ID!,
         eventId: latest.id!,
         requestBody: {
           attendees: [{ email }],
@@ -70,7 +63,7 @@ export default class GCalendarProvider {
   async acceptCalender() {
     const res = await this.gCal.calendarList.insert({
       requestBody: {
-        id: process.env.GOS_CALENDAR_ID,
+        id: process.env.GOC_CALENDAR_ID,
       },
     });
   }
