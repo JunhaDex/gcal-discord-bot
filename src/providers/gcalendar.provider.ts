@@ -14,7 +14,11 @@ export default class GCalendarProvider {
 
   constructor() {
     this.accessToken = new google.auth.GoogleAuth({
-      keyFile: PATH,
+      projectId: '',
+      credentials: {
+        client_email: '',
+        private_key: '',
+      },
       scopes: SCOPES,
     });
     this.gCal = google.calendar({ version: 'v3', auth: this.accessToken });
@@ -31,7 +35,7 @@ export default class GCalendarProvider {
       dayjs().add(30, 'day').format(),
     ];
     const res = await this.gCal.events.list({
-      calendarId: process.env.CALENDAR_ID!,
+      calendarId: process.env.GOS_CALENDAR_ID!,
       timeMin,
       timeMax,
     });
@@ -54,7 +58,7 @@ export default class GCalendarProvider {
     const latest = [...(await this.listEvents())][0];
     if (latest) {
       const res = await this.gCal.events.patch({
-        calendarId: process.env.CALENDAR_ID!,
+        calendarId: process.env.GOS_CALENDAR_ID!,
         eventId: latest.id!,
         requestBody: {
           attendees: [{ email }],
@@ -66,7 +70,7 @@ export default class GCalendarProvider {
   async acceptCalender() {
     const res = await this.gCal.calendarList.insert({
       requestBody: {
-        id: process.env.CALENDAR_ID,
+        id: process.env.GOS_CALENDAR_ID,
       },
     });
   }

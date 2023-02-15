@@ -31,7 +31,7 @@ secret
 *.log*
 
 # local env files
-.env
+.env*
 
 # turbo
 .turbo

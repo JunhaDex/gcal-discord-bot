@@ -57,7 +57,7 @@ export const getUpcomingEvents: SlashCommand = {
     const events = await calendar.listEvents();
     const reply = new EmbedBuilder()
       .setTitle('예정된 일정 목록')
-      .setURL(process.env.CALENDAR_PUB_URL!)
+      .setURL(process.env.GOC_CALENDAR_PUB_URL!)
       .setAuthor({
         name: 'Some name',
         iconURL: 'https://i.imgur.com/AfFp7pu.png',
@@ -82,7 +82,7 @@ export const broadcastEvents: SlashCommand = {
     const events = await calendar.listEvents();
     const reply = new EmbedBuilder()
       .setTitle('체널에 일정을 공지드립니다!')
-      .setURL(process.env.CALENDAR_PUB_URL!)
+      .setURL(process.env.GOC_CALENDAR_PUB_URL!)
       .setAuthor({
         name: 'Some name',
         iconURL: 'https://i.imgur.com/AfFp7pu.png',
@@ -105,7 +105,7 @@ export const openWebView: SlashCommand = {
   execute: async (interaction: CommandInteraction) => {
     const reply = new EmbedBuilder()
       .setTitle('캘린더 바로가기')
-      .setURL(process.env.CALENDAR_PUB_URL!)
+      .setURL(process.env.GOC_CALENDAR_PUB_URL!)
       .setAuthor({
         name: 'Some name',
         iconURL: 'https://i.imgur.com/AfFp7pu.png',
@@ -115,7 +115,7 @@ export const openWebView: SlashCommand = {
     const button = new ButtonBuilder()
       .setLabel('Open Calender')
       .setStyle(5)
-      .setURL(process.env.CALENDAR_PUB_URL!);
+      .setURL(process.env.GOC_CALENDAR_PUB_URL!);
     const row = new ActionRowBuilder<ButtonBuilder>().setComponents(button);
     await interaction.reply({
       embeds: [reply],
@@ -131,7 +131,7 @@ export const subscribe: SlashCommand = {
   execute: async (interaction: CommandInteraction) => {
     const reply = new EmbedBuilder()
       .setTitle('캘린더 구독하기')
-      .setURL(process.env.CALENDAR_SUBSCRIBE_URL!)
+      .setURL(process.env.GOC_CALENDAR_SUBSCRIBE_URL!)
       .setAuthor({
         name: 'Some name',
         iconURL: 'https://i.imgur.com/AfFp7pu.png',
@@ -143,7 +143,7 @@ export const subscribe: SlashCommand = {
     const button = new ButtonBuilder()
       .setLabel('Open Calender')
       .setStyle(5)
-      .setURL(process.env.CALENDAR_SUBSCRIBE_URL!);
+      .setURL(process.env.GOC_CALENDAR_SUBSCRIBE_URL!);
     const row = new ActionRowBuilder<ButtonBuilder>().setComponents(button);
     await interaction.reply({
       embeds: [reply],
@@ -171,7 +171,7 @@ export const invite: SlashCommand = {
     }
     const reply = new EmbedBuilder()
       .setTitle('모임 참석 리마인더 설정')
-      .setURL(process.env.CALENDAR_SUBSCRIBE_URL!)
+      .setURL(process.env.GOC_CALENDAR_SUBSCRIBE_URL!)
       .setAuthor({
         name: 'Some name',
         iconURL: 'https://i.imgur.com/AfFp7pu.png',

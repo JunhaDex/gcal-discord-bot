@@ -19,15 +19,15 @@ const main = async () => {
       return command.data.toJSON();
     });
     const rest = new REST({ version: '10' }).setToken(
-      process.env.ACCESS_TOKEN!
+      process.env.DSC_ACCESS_TOKEN!
     );
-    await rest.put(Routes.applicationCommands(process.env.CLIENT_ID!), {
+    await rest.put(Routes.applicationCommands(process.env.GOC_CLIENT_ID!), {
       body: commandMeta,
     });
     console.log('logged in!');
   });
   client.on(Events.InteractionCreate, async (interaction: any) => {
-    const admin = await client.users.fetch(process.env.CHANNEL_ADMIN_ID!);
+    const admin = await client.users.fetch(process.env.DSC_CHANNEL_ADMIN_ID!);
     if (interaction.isChatInputCommand()) {
       const exec = Commands.find(
         command => command.data.name === interaction.commandName
@@ -63,7 +63,7 @@ const main = async () => {
     interaction.reply('command not found :(');
   });
 
-  await client.login(process.env.ACCESS_TOKEN);
+  await client.login(process.env.DSC_ACCESS_TOKEN);
 };
 //TODO manage keyfile
 main();
