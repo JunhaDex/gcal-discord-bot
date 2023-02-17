@@ -63,7 +63,8 @@ export const getUpcomingEvents: SlashCommand = {
       .setURL(process.env.GOC_CALENDAR_PUB_URL!)
       .setAuthor({
         name: 'Some name',
-        iconURL: 'https://i.imgur.com/AfFp7pu.png',
+        iconURL:
+          'https://kysa-discord-bot.herokuapp.com/static/images/cal-bot.webp',
         url: 'https://discord.js.org',
       })
       .setDescription('30일 내 예정된 일정 목록입니다.');
