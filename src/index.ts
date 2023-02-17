@@ -1,10 +1,13 @@
 import { Client, Events, GatewayIntentBits, REST, Routes } from 'discord.js';
 import * as dotenv from 'dotenv';
+import express from 'express';
 import Commands from './commands';
 import Interactions from './interactions';
+import * as process from 'process';
+import * as path from 'path';
 
 dotenv.config();
-
+const app = express();
 const main = async () => {
   const client = new Client({
     intents: [
@@ -67,3 +70,11 @@ const main = async () => {
 };
 //TODO manage keyfile
 main();
+
+app.use(
+  '/static/images',
+  express.static(path.join(process.cwd(), 'public/assets'))
+);
+app.listen(process.env.PORT ?? '3000', () => {
+  console.log(`Listening on port ${process.env.PORT}`);
+});

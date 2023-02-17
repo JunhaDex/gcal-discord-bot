@@ -1,6 +1,7 @@
 import { SlashCommand } from '../structure';
 import {
   ActionRowBuilder,
+  AttachmentBuilder,
   ButtonBuilder,
   CommandInteraction,
   EmbedBuilder,
@@ -8,6 +9,7 @@ import {
 } from 'discord.js';
 import dayjs from 'dayjs';
 import GCalendarProvider from '../providers/gcalendar.provider';
+import GDriveProvider from '../providers/gdrive.provider';
 
 export const Ping: SlashCommand = {
   data: new SlashCommandBuilder()
@@ -55,6 +57,7 @@ export const getUpcomingEvents: SlashCommand = {
   execute: async (interaction: CommandInteraction) => {
     const calendar = new GCalendarProvider();
     const events = await calendar.listEvents();
+    let file: AttachmentBuilder | undefined;
     const reply = new EmbedBuilder()
       .setTitle('예정된 일정 목록')
       .setURL(process.env.GOC_CALENDAR_PUB_URL!)
@@ -64,13 +67,26 @@ export const getUpcomingEvents: SlashCommand = {
         url: 'https://discord.js.org',
       })
       .setDescription('30일 내 예정된 일정 목록입니다.');
+    if (events.length ?? events[0].file) {
+      const drive = new GDriveProvider();
+      const dataStr = await drive.getImage(events[0].file!);
+      const name = `${events[0].file!}.${dataStr.ext}`;
+      file = new AttachmentBuilder(dataStr.buffer, {
+        name,
+      });
+      reply.setImage(`attachment://${name}`);
+    }
     events.forEach(event => {
       reply.addFields({
         name: `[${event.date}] ${event.title}`,
         value: `${event.description}`,
       });
     });
-    await interaction.reply({ embeds: [reply], ephemeral: true });
+    await interaction.reply({
+      embeds: [reply],
+      files: file ? [file] : [],
+      ephemeral: true,
+    });
   },
 };
 export const broadcastEvents: SlashCommand = {

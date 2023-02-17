@@ -32,6 +32,7 @@ export default class GCalendarProvider {
       timeMax,
     });
     if (res.data) {
+      console.log(res.data.items);
       return [...res.data.items!].map(item => {
         return {
           id: item.id,
@@ -40,6 +41,7 @@ export default class GCalendarProvider {
           date: dayjs(item.start!.date ?? item.start!.dateTime)
             .locale('ko')
             .format('YYYY. MM. DD (ddd)'),
+          file: item.attachments ? item.attachments[0]?.fileId : undefined,
         };
       });
     }
