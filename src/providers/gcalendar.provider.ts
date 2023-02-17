@@ -6,15 +6,14 @@ const SCOPES = ['https://www.googleapis.com/auth/calendar'];
 const PATH = path.join(process.cwd(), 'secret/auth-key.json');
 
 export default class GCalendarProvider {
-  private readonly accessToken;
   private gCal;
 
   constructor() {
-    this.accessToken = new google.auth.GoogleAuth({
+    const accessToken = new google.auth.GoogleAuth({
       keyFile: PATH,
       scopes: SCOPES,
     });
-    this.gCal = google.calendar({ version: 'v3', auth: this.accessToken });
+    this.gCal = google.calendar({ version: 'v3', auth: accessToken });
   }
 
   async listCalender() {
