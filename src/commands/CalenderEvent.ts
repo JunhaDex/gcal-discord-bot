@@ -10,6 +10,7 @@ import {
 import dayjs from 'dayjs';
 import GCalendarProvider from '../providers/gcalendar.provider';
 import GDriveProvider from '../providers/gdrive.provider';
+import * as repl from 'repl';
 
 function commonEmbedBuilder(title: string): EmbedBuilder {
   const calUrl = process.env.GOC_CALENDAR_PUB_URL!;
@@ -136,15 +137,9 @@ export const openWebView: SlashCommand = {
     .setName('cal-open')
     .setDescription('open calender web view'),
   execute: async (interaction: CommandInteraction) => {
-    const reply = new EmbedBuilder()
-      .setTitle('캘린더 바로가기')
-      .setURL(process.env.GOC_CALENDAR_PUB_URL!)
-      .setAuthor({
-        name: 'Some name',
-        iconURL: 'https://i.imgur.com/AfFp7pu.png',
-        url: 'https://discord.js.org',
-      })
-      .setDescription('아래 버튼을 누르면 캘린더 웹페이지로 이동합니다.');
+    const reply = commonEmbedBuilder('캘린더 바로가기').setDescription(
+      '아래 버튼을 누르면 캘린더 웹페이지로 이동합니다.'
+    );
     const button = new ButtonBuilder()
       .setLabel('Open Calender')
       .setStyle(5)
@@ -162,17 +157,9 @@ export const subscribe: SlashCommand = {
     .setName('cal-subscribe')
     .setDescription('open subscription link'),
   execute: async (interaction: CommandInteraction) => {
-    const reply = new EmbedBuilder()
-      .setTitle('캘린더 구독하기')
-      .setURL(process.env.GOC_CALENDAR_SUBSCRIBE_URL!)
-      .setAuthor({
-        name: 'Some name',
-        iconURL: 'https://i.imgur.com/AfFp7pu.png',
-        url: 'https://discord.js.org',
-      })
-      .setDescription(
-        '아래 버튼을 누르면 사용하는 구글 계정에 캘린더를 연동할 수 있습니다 (PC)'
-      );
+    const reply = commonEmbedBuilder('캘린더 구독하기').setDescription(
+      '아래 버튼을 누르면 사용하는 구글 계정에 캘린더를 연동할 수 있습니다 (PC)'
+    );
     const button = new ButtonBuilder()
       .setLabel('Open Calender')
       .setStyle(5)
@@ -202,33 +189,44 @@ export const invite: SlashCommand = {
       });
       return;
     }
-    const reply = new EmbedBuilder()
-      .setTitle('모임 참석 리마인더 설정')
-      .setURL(process.env.GOC_CALENDAR_SUBSCRIBE_URL!)
-      .setAuthor({
-        name: 'Some name',
-        iconURL: 'https://i.imgur.com/AfFp7pu.png',
-        url: 'https://discord.js.org',
-      })
-      .setDescription(
-        '캘린더에 참여 여부를 알리고, 예약한 내역을 이메일로 보내드립니다.'
-      );
+    await interaction.deferReply({ ephemeral: true });
+    const calendar = new GCalendarProvider();
+    const events = await calendar.listEvents();
+    let file: AttachmentBuilder | undefined;
+    const reply = commonEmbedBuilder('참여 예약하기').setDescription(
+      '모임 참석여부를 등록합니다.\n 참석여부를 등록함으로써, 이메일을 수집하며 추후 이벤트 추첨에 활용될 수 있습니다. 아래 이벤트에 참석하려면 "참석여부 등록" 버튼을 눌러주세요.'
+    );
+    if (events.length) {
+      const latestEvent = events[0];
+      reply.addFields({
+        name: `[${latestEvent.date}] ${latestEvent.title}`,
+        value: `${latestEvent.description}`,
+      });
+      if (latestEvent.file) {
+        const drive = new GDriveProvider();
+        const dataStr = await drive.getImage(latestEvent.file);
+        const name = `${events[0].file!}.${dataStr.ext}`;
+        file = new AttachmentBuilder(dataStr.buffer, {
+          name,
+        });
+        reply.setImage(`attachment://${name}`);
+      }
+    } else {
+      reply.addFields({
+        name: '이벤트 없음',
+        value: '참석 가능한 일정이 없습니다.',
+      });
+    }
     const customId = `cal-reg::${email}::${dayjs().format()}`;
     const button = new ButtonBuilder()
       .setCustomId(customId)
-      .setLabel('모임 참여 예약')
+      .setLabel('참석여부 등록')
       .setStyle(1);
     const row = new ActionRowBuilder<ButtonBuilder>().setComponents(button);
-    await interaction.reply({
+    await interaction.editReply({
       embeds: [reply],
       components: [row],
-      ephemeral: true,
+      files: file ? [file] : [],
     });
   },
-};
-export const showHelp: SlashCommand = {
-  data: new SlashCommandBuilder()
-    .setName('cal-help')
-    .setDescription('show calender commands help'),
-  execute: async (interaction: CommandInteraction) => {},
 };

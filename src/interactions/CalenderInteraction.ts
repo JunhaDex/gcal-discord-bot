@@ -25,7 +25,7 @@ export const openInvitationConfirmation: Interaction = {
       const text = JSON.stringify(reservation)
         .replace(/[{}]|"/g, '')
         .replace(/,/g, '\n');
-      const liner = '======================\n';
+      const liner = '\n======================\n';
       extra.admin.send(text);
       interaction.user.send(
         '신청하신 모임 참석정보 입니다.' + liner + text + liner

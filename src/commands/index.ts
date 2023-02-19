@@ -5,7 +5,6 @@ import {
   openWebView,
   Ping,
   invite,
-  showHelp,
   subscribe,
 } from './CalenderEvent';
 
@@ -16,6 +15,5 @@ const Commands: SlashCommand[] = [
   openWebView,
   subscribe,
   invite,
-  showHelp,
 ];
 export default Commands;
