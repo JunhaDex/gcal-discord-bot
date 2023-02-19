@@ -72,7 +72,7 @@ const main = async () => {
 main();
 
 app.use(
-  '/static/images',
+  '/static/image',
   express.static(path.join(process.cwd(), 'public/assets'))
 );
 app.listen(process.env.PORT ?? '3000', () => {

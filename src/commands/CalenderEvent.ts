@@ -11,6 +11,20 @@ import dayjs from 'dayjs';
 import GCalendarProvider from '../providers/gcalendar.provider';
 import GDriveProvider from '../providers/gdrive.provider';
 
+function commonEmbedBuilder(title: string): EmbedBuilder {
+  const calUrl = process.env.GOC_CALENDAR_PUB_URL!;
+  const cdn = process.env.CDN_URL;
+  return new EmbedBuilder()
+    .setTitle(title)
+    .setURL(calUrl)
+    .setAuthor({
+      name: 'KYSA Calendar Bot',
+      iconURL: `${cdn}/cal-bot.webp`,
+      url: calUrl,
+    })
+    .setThumbnail(`${cdn}/logo.webp`);
+}
+
 export const Ping: SlashCommand = {
   data: new SlashCommandBuilder()
     .setName('ping')
@@ -51,26 +65,20 @@ export const Ping: SlashCommand = {
 
 export const getUpcomingEvents: SlashCommand = {
   data: new SlashCommandBuilder()
-    .setName('cal-upcoming')
+    .setName('cal-list')
     .setDescription('show upcoming events')
     .setDescriptionLocalizations({ ko: '다가오는 이벤트를 확인합니다' }),
   execute: async (interaction: CommandInteraction) => {
+    await interaction.deferReply({ ephemeral: true });
     const calendar = new GCalendarProvider();
     const events = await calendar.listEvents();
     let file: AttachmentBuilder | undefined;
-    const reply = new EmbedBuilder()
-      .setTitle('예정된 일정 목록')
-      .setURL(process.env.GOC_CALENDAR_PUB_URL!)
-      .setAuthor({
-        name: 'Some name',
-        iconURL:
-          'https://kysa-discord-bot.herokuapp.com/static/images/cal-bot.webp',
-        url: 'https://discord.js.org',
-      })
-      .setDescription('30일 내 예정된 일정 목록입니다.');
-    if (events.length ?? events[0].file) {
+    const reply = commonEmbedBuilder('일정 목록').setDescription(
+      '30일 내 예정된 일정 목록입니다.'
+    );
+    if (events.length && events[0].file) {
       const drive = new GDriveProvider();
-      const dataStr = await drive.getImage(events[0].file!);
+      const dataStr = await drive.getImage(events[0].file);
       const name = `${events[0].file!}.${dataStr.ext}`;
       file = new AttachmentBuilder(dataStr.buffer, {
         name,
@@ -83,36 +91,44 @@ export const getUpcomingEvents: SlashCommand = {
         value: `${event.description}`,
       });
     });
-    await interaction.reply({
+    await interaction.editReply({
       embeds: [reply],
       files: file ? [file] : [],
-      ephemeral: true,
     });
   },
 };
 export const broadcastEvents: SlashCommand = {
   data: new SlashCommandBuilder()
     .setName('cal-alert')
-    .setDescription('alert channel upcoming events'),
+    .setDescription('alert channel upcoming events')
+    .setDefaultMemberPermissions(0),
   execute: async (interaction: CommandInteraction) => {
+    await interaction.deferReply({ ephemeral: false });
     const calendar = new GCalendarProvider();
     const events = await calendar.listEvents();
-    const reply = new EmbedBuilder()
-      .setTitle('체널에 일정을 공지드립니다!')
-      .setURL(process.env.GOC_CALENDAR_PUB_URL!)
-      .setAuthor({
-        name: 'Some name',
-        iconURL: 'https://i.imgur.com/AfFp7pu.png',
-        url: 'https://discord.js.org',
-      })
-      .setDescription('30일 내 예정된 일정 목록입니다.');
+    let file: AttachmentBuilder | undefined;
+    const reply = commonEmbedBuilder('일정 전체공지').setDescription(
+      '30일 내 예정된 일정 목록입니다.'
+    );
+    if (events.length && events[0].file) {
+      const drive = new GDriveProvider();
+      const dataStr = await drive.getImage(events[0].file);
+      const name = `${events[0].file!}.${dataStr.ext}`;
+      file = new AttachmentBuilder(dataStr.buffer, {
+        name,
+      });
+      reply.setImage(`attachment://${name}`);
+    }
     events.forEach(event => {
       reply.addFields({
         name: `[${event.date}] ${event.title}`,
         value: `${event.description}`,
       });
     });
-    await interaction.reply({ embeds: [reply], ephemeral: false });
+    await interaction.editReply({
+      embeds: [reply],
+      files: file ? [file] : [],
+    });
   },
 };
 export const openWebView: SlashCommand = {

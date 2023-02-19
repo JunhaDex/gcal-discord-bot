@@ -22,7 +22,6 @@ export default class GDriveProvider {
       .get({ fileId, alt: 'media' }, { responseType: 'arraybuffer' })
       .catch(e => {
         console.error(e);
-        console.log(JSON.stringify(e.config));
         throw e;
       });
     const imageType = res.headers['content-type'];

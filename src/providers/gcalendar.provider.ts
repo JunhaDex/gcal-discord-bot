@@ -32,7 +32,6 @@ export default class GCalendarProvider {
       timeMax,
     });
     if (res.data) {
-      console.log(res.data.items);
       return [...res.data.items!].map(item => {
         return {
           id: item.id,
