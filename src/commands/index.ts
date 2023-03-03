@@ -1,17 +1,15 @@
 import { SlashCommand } from '../structure';
 import {
-  broadcastEvents,
+  // broadcastEvents,
+  // Ping,
   getUpcomingEvents,
   openWebView,
-  Ping,
   invite,
   subscribe,
 } from './CalenderEvent';
 
 const Commands: SlashCommand[] = [
-  Ping,
   getUpcomingEvents,
-  broadcastEvents,
   openWebView,
   subscribe,
   invite,
