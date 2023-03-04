@@ -1,4 +1,4 @@
-import {SlashCommand} from '../structure';
+import { SlashCommand } from '../structure';
 import {
   ActionRowBuilder,
   AttachmentBuilder,
@@ -29,11 +29,11 @@ function commonEmbedBuilder(title: string): EmbedBuilder {
 export const getUpcomingEvents: SlashCommand = {
   data: new SlashCommandBuilder()
     .setName('cal-list')
-    .setNameLocalizations({ko: '일정목록'})
+    .setNameLocalizations({ ko: '일정목록' })
     .setDescription('show upcoming events')
-    .setDescriptionLocalizations({ko: '다가오는 이벤트를 확인합니다'}),
+    .setDescriptionLocalizations({ ko: '다가오는 이벤트를 확인합니다' }),
   execute: async (interaction: CommandInteraction) => {
-    await interaction.deferReply({ephemeral: true});
+    await interaction.deferReply({ ephemeral: true });
     const calendar = new GCalendarProvider();
     const events = await calendar.listEvents();
     let file: AttachmentBuilder | undefined;
@@ -64,9 +64,9 @@ export const getUpcomingEvents: SlashCommand = {
 export const openWebView: SlashCommand = {
   data: new SlashCommandBuilder()
     .setName('cal-open')
-    .setNameLocalizations({ko: '일정열기'})
+    .setNameLocalizations({ ko: '일정열기' })
     .setDescription('open calender web view')
-    .setDescriptionLocalizations({ko: '캘린더 뷰어를 웹으로 보여줍니다'}),
+    .setDescriptionLocalizations({ ko: '캘린더 뷰어를 웹으로 보여줍니다' }),
   execute: async (interaction: CommandInteraction) => {
     const reply = commonEmbedBuilder('캘린더 바로가기').setDescription(
       '아래 버튼을 누르면 캘린더 웹페이지로 이동합니다.'
@@ -86,8 +86,11 @@ export const openWebView: SlashCommand = {
 export const subscribe: SlashCommand = {
   data: new SlashCommandBuilder()
     .setName('cal-subscribe')
-    .setNameLocalizations({ko: '일정구독'})
-    .setDescription('open subscription link').setDescriptionLocalizations({ko: '내 구글 캘린더에 코모라 캘린더를 추가하여 구독합니다.'}),
+    .setNameLocalizations({ ko: '일정구독' })
+    .setDescription('open subscription link')
+    .setDescriptionLocalizations({
+      ko: '내 구글 캘린더에 코모라 캘린더를 추가하여 구독합니다.',
+    }),
   execute: async (interaction: CommandInteraction) => {
     const reply = commonEmbedBuilder('캘린더 구독하기').setDescription(
       '아래 버튼을 누르면 사용하는 구글 계정에 캘린더를 연동할 수 있습니다 (PC)'
@@ -110,9 +113,11 @@ export const invite: SlashCommand = {
       option.setName('e-mail').setDescription('Your Email').setRequired(true)
     )
     .setName('cal-invite')
-    .setNameLocalizations({ko: '일정참여예약'})
+    .setNameLocalizations({ ko: '일정참여예약' })
     .setDescription('send invitation email')
-    .setDescriptionLocalizations({ko: '이메일을 등록하여 다가올 이벤트에 참여를 예약합니다.'}),
+    .setDescriptionLocalizations({
+      ko: '이메일을 등록하여 다가올 이벤트에 참여를 예약합니다.',
+    }),
 
   execute: async (interaction: CommandInteraction) => {
     const email = (interaction.options as any).getString('e-mail');
@@ -123,7 +128,7 @@ export const invite: SlashCommand = {
       });
       return;
     }
-    await interaction.deferReply({ephemeral: true});
+    await interaction.deferReply({ ephemeral: true });
     const calendar = new GCalendarProvider();
     const events = await calendar.listEvents();
     let file: AttachmentBuilder | undefined;
@@ -237,4 +242,3 @@ export const invite: SlashCommand = {
 //     });
 //   },
 // };
-
