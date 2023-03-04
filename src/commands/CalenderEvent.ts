@@ -19,7 +19,7 @@ function commonEmbedBuilder(title: string): EmbedBuilder {
     .setTitle(title)
     .setURL(calUrl)
     .setAuthor({
-      name: 'KYSA Calendar Bot',
+      name: '코모라 캘린더 봇',
       iconURL: `${cdn}/cal-bot.webp`,
       url: calUrl,
     })
